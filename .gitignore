@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+.installed.cfg
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Env / IDE
+.env
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Conda
+.conda/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Project — keep model + plot artifacts so the demo works on clone
+# (uncomment to exclude if repo gets too large)
+# models/*.pkl
+# models/*.npy
