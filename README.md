@@ -2,6 +2,9 @@
 
 Predict whether a Telco customer will churn, explain every prediction with SHAP, and serve the whole thing through a 4-page Streamlit dashboard.
 
+**🔗 Live demo:** https://ajmaldeenv4-churn-prediction-appapp-5klujp.streamlit.app/
+**📦 Repo:** https://github.com/Ajmaldeenv4/churn-prediction
+
 ## Results
 
 | Model | Test Accuracy | Test ROC-AUC | Test F1 | 5-fold CV ROC-AUC |
