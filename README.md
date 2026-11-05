@@ -45,7 +45,7 @@ SMOTE raises recall at the 0.5 cut-off but does not improve ranking, and its pro
 ## Setup
 
 ```bash
-conda create -n churn python=3.10 -y
+conda create -n churn python=3.11 -y
 conda activate churn
 pip install -r requirements.txt
 ```
@@ -131,6 +131,7 @@ churn-prediction/
 ## Notes
 
 - `requirements.txt` is pinned because `models/*.pkl` must be loaded by the scikit-learn and XGBoost versions that wrote them. If you upgrade either, rerun the pipeline.
+- The app runs on Python 3.11 on Streamlit Community Cloud. Use 3.11–3.13 there: `numpy` and `shap` have no wheels for these pins on 3.14, so a 3.14 deploy tries to compile them and goes down.
 - `xgboost` stays below 3.0 because SHAP 0.49 cannot parse the XGBoost 3.x `base_score` serialization format.
 - The Predict page builds the feature vector through `encode_customer()` and the persisted `feature_names.json` to guarantee column order matches what the model was trained on.
 
