@@ -1,12 +1,13 @@
-pandas
-numpy
-scikit-learn
-xgboost<3.0
-shap
-streamlit
-matplotlib
-seaborn
-imbalanced-learn
-plotly
-joblib
-jupyter
+# Runtime and pipeline dependencies. Pinned because models/*.pkl must be loaded by
+# the same scikit-learn and XGBoost versions that wrote them.
+imbalanced-learn==0.14.2
+joblib==1.6.0
+matplotlib==3.10.9
+numpy==2.2.6
+pandas==2.3.3
+scikit-learn==1.7.2
+seaborn==0.13.2
+# SHAP 0.49 cannot parse the XGBoost 3.x base_score serialization format.
+shap==0.49.1
+streamlit==1.65.0
+xgboost==2.1.4

@@ -8,18 +8,22 @@ Outputs in app/assets:
   - shap_dependence_monthly.png  MonthlyCharges dependence
 
 Also writes raw values to models/shap_values.npy.
+
+The model consumes scaled features, but every plot labels them in original units
+(tenure in months, charges in dollars) so the charts can be read directly.
 """
 from __future__ import annotations
 
 import pickle
 from pathlib import Path
 
+import joblib
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import shap
 
-from preprocess import prepare_data
+from preprocess import split_data
 
 ROOT = Path(__file__).resolve().parents[1]
 MODELS_DIR = ROOT / "models"
@@ -27,27 +31,34 @@ ASSETS = ROOT / "app" / "assets"
 
 
 def main() -> None:
-    X_train, X_test, y_train, y_test, feature_names = prepare_data()
-    X_test_df = pd.DataFrame(X_test, columns=feature_names)
+    _, X_original, _, y_test, feature_names, _ = split_data()
+    X_display = pd.DataFrame(X_original, columns=feature_names)
+    X_test = pd.DataFrame(
+        joblib.load(MODELS_DIR / "scaler.pkl").transform(X_original), columns=feature_names
+    )
 
     with open(MODELS_DIR / "xgb_model.pkl", "rb") as f:
         model = pickle.load(f)
 
     print("Building TreeExplainer...")
     explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_test_df)
-    explanation = explainer(X_test_df)
+    scored = explainer(X_test)
+    shap_values = scored.values
+    explanation = shap.Explanation(
+        values=shap_values, base_values=scored.base_values,
+        data=X_original, feature_names=feature_names,
+    )
 
     np.save(MODELS_DIR / "shap_values.npy", shap_values)
     print(f"Saved shap_values.npy  shape={shap_values.shape}")
 
     # 1. Beeswarm summary
-    shap.summary_plot(shap_values, X_test_df, show=False)
+    shap.summary_plot(shap_values, X_display, show=False)
     plt.savefig(ASSETS / "shap_summary.png", bbox_inches="tight", dpi=150)
     plt.clf()
 
     # 2. Bar chart (mean |SHAP|)
-    shap.summary_plot(shap_values, X_test_df, plot_type="bar", show=False)
+    shap.summary_plot(shap_values, X_display, plot_type="bar", show=False)
     plt.savefig(ASSETS / "shap_bar.png", bbox_inches="tight", dpi=150)
     plt.clf()
 
@@ -70,7 +81,7 @@ def main() -> None:
     plt.clf()
 
     # 5. Dependence plot — MonthlyCharges
-    shap.dependence_plot("MonthlyCharges", shap_values, X_test_df, show=False)
+    shap.dependence_plot("MonthlyCharges", shap_values, X_display, show=False)
     plt.savefig(ASSETS / "shap_dependence_monthly.png", bbox_inches="tight", dpi=150)
     plt.clf()
 

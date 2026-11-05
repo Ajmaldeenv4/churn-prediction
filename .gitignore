@@ -36,3 +36,6 @@ Thumbs.db
 # (uncomment to exclude if repo gets too large)
 # models/*.pkl
 # models/*.npy
+
+# Tests
+.pytest_cache/
